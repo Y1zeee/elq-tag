@@ -1,0 +1,362 @@
+<title>ELQ Tag Placement</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="assets/style.css"/>
+<style>
+/* Layout: sticky dashboard bar, terminal tabs, then page-sections of workstation cards, each workstation in its own hue.
+   Tokens come from the dashboard stylesheet (--blu, --tel, --t0..t4, --s1.., --b1..); hues below are generated per workstation. */
+:root{color-scheme:dark;--ok:#43D99B;--bad:#FF7188;}
+.wrap{padding-block:24px 60px;padding-inline:max(16px,clamp(12px,2.5vw,40px));max-width:1500px;margin:0 auto;}
+.head{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;margin-bottom:22px;}
+.head h1{font-size:clamp(26px,4vw,40px);line-height:1.05;letter-spacing:-.02em;color:var(--t0);text-wrap:balance;}
+.head h1 span{color:var(--blu);}
+.head p{color:var(--t2);max-width:60ch;margin-top:8px;font-size:13px;}
+.kick{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--tel);text-transform:uppercase;margin-bottom:10px;display:flex;gap:8px;align-items:center;}
+.kick i{width:6px;height:6px;border-radius:50%;background:var(--tel);box-shadow:0 0 10px var(--tel);}
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px;}
+.tools input[type=text]{flex:1 1 220px;min-width:0;}
+.tools input[type=text]{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r8);color:var(--t0);padding:9px 12px;font:16px 'Inter',sans-serif;}
+.tools input[type=text]:focus{outline:none;border-color:var(--blu);}
+.tools input[type=text]::placeholder{color:var(--t3);}
+.tgl{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--t1);background:var(--s1);border:1px solid var(--b1);border-radius:var(--r8);padding:8px 12px;cursor:pointer;user-select:none;}
+.tgl input{accent-color:var(--blu);width:15px;height:15px;}
+.tabs2{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.tab2{font:600 13px 'Inter',sans-serif;color:var(--t1);background:var(--s1);border:1px solid var(--b1);border-radius:var(--r8);padding:9px 16px;cursor:pointer;display:flex;gap:10px;align-items:center;}
+.tab2 b{font-family:var(--mono);font-weight:500;font-size:11px;color:var(--t3);}
+#tabs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+#tabs .tab2{flex-direction:column;align-items:stretch;gap:6px;text-align:left;padding:16px 16px 14px;border-radius:18px;position:relative;overflow:hidden;
+ background:linear-gradient(145deg,rgba(255,255,255,.10),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.16);
+ -webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 8px 24px rgba(0,0,0,.28);transition:transform .15s,border-color .15s,box-shadow .15s;}
+#tabs .tab2::before{content:"";position:absolute;inset:0 0 55% 0;background:linear-gradient(180deg,rgba(255,255,255,.12),transparent);pointer-events:none;}
+#tabs .tab2 .tn{font:800 26px/1 'JetBrains Mono',monospace;letter-spacing:.04em;color:var(--t0);position:relative;}
+#tabs .tab2 .tc{font:600 13px var(--mono);color:var(--t1);position:relative;}
+#tabs .tab2 .tc em{font-style:normal;color:var(--t3);font-weight:500;}
+#tabs .tab2 .bar{height:6px;border-radius:99px;background:rgba(255,255,255,.10);overflow:hidden;position:relative;margin-top:2px;}
+#tabs .tab2 .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blu),var(--tel));border-radius:99px;}
+#tabs .tab2:active{transform:scale(.98);}
+#tabs .tab2.on{border-color:var(--blu);background:linear-gradient(145deg,color-mix(in srgb,var(--blu) 30%,transparent),color-mix(in srgb,var(--blu) 8%,transparent));box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 0 1px var(--blu),0 10px 30px color-mix(in srgb,var(--blu) 28%,transparent);}
+#tabs .tab2.on .tn{color:#fff;}
+.tab2.on{color:var(--t0);border-color:var(--blu);background:var(--blu-d);}
+.tab2:focus-visible,.btn:focus-visible,.tin:focus-visible{outline:2px solid var(--blu);outline-offset:2px;}
+.sec{margin-top:34px;padding-top:18px;border-top:1px solid var(--b1);}
+.sec:first-child{border-top:0;padding-top:0;margin-top:20px;}
+.cats{margin-top:-6px;}
+.cats .tab2{font-size:12.5px;padding:8px 14px;}
+.sec-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+.sec-h h2{font-size:20px;color:var(--t0);letter-spacing:.02em;}
+.sec-h span{color:var(--t2);font-size:12px;}
+.sec-h em{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--t3);margin-left:auto;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:14px;}
+.ws{--c:#59C7FF;background:var(--bg1);border:1px solid color-mix(in srgb,var(--c) 38%,transparent);border-radius:var(--r12);overflow:hidden;min-width:0;display:flex;flex-direction:column;}
+.ws-top{background:color-mix(in srgb,var(--c) 20%,var(--bg1));padding:16px 14px;display:flex;gap:10px;align-items:center;border-bottom:1px solid color-mix(in srgb,var(--c) 38%,transparent);}
+.sw{width:38px;height:38px;border-radius:50%;background:var(--c);flex:0 0 38px;display:grid;place-items:center;font:800 15px var(--mono);color:#07111F;}
+.ws-name{display:inline-block;font:800 21px/1.15 'JetBrains Mono',monospace;color:#07111F;background:var(--c);padding:5px 11px;border-radius:8px;letter-spacing:.03em;overflow-wrap:anywhere;box-shadow:0 2px 14px color-mix(in srgb,var(--c) 40%,transparent);}
+.ws-meta{font-size:13px;color:var(--t1);margin-top:7px;overflow-wrap:anywhere;}
+.ws-meta b{font-family:var(--mono);font-weight:500;color:var(--t0);}
+.ws-prog{margin-left:auto;font:600 13px var(--mono);color:var(--t1);white-space:nowrap;}
+.dv-p{font:600 12px ui-monospace,Consolas,monospace;color:var(--tel);margin-top:2px;letter-spacing:.3px}
+.dv{padding:11px 14px;border-top:1px solid var(--t4);display:grid;gap:8px;}
+.dv:first-of-type{border-top:0;}
+.dv-t{font-weight:600;color:var(--t0);font-size:13px;}
+.dv-m{font-size:11.5px;color:var(--t2);margin-top:2px;}
+.dv-i{display:flex;gap:10px;align-items:stretch;}
+.tin{flex:1;min-width:0;background:var(--bg0);border:1px solid var(--b1);border-radius:var(--r8);color:var(--t0);font:600 16px var(--mono);padding:10px 12px;text-transform:uppercase;letter-spacing:.06em;}
+.tin::placeholder{color:var(--t3);text-transform:none;letter-spacing:0;}
+.tin.ok{border-color:var(--ok);background:rgba(67,217,155,.10);color:var(--ok);font-weight:700;}
+.tin.bad{border-color:var(--bad);background:rgba(255,113,136,.10);}
+.tin:focus{outline:none;border-color:var(--blu);}
+.dv-e{font-size:12px;color:var(--bad);margin-top:-2px;}
+.dv-e[hidden]{display:none;}
+.st{font:700 11px var(--mono);letter-spacing:.1em;flex:0 0 auto;min-width:92px;text-align:center;border-radius:var(--r8);border:1px solid var(--b2);padding:11px 12px;color:var(--t0);background:var(--s2);cursor:pointer;white-space:nowrap;}
+.st:hover{background:var(--s3);}
+.st:focus-visible{outline:2px solid var(--blu);outline-offset:2px;}
+.st.ok{color:#07111F;background:var(--ok);border-color:var(--ok);}
+.hint{font-size:11px;color:var(--t3);margin-top:8px;}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--s3);color:var(--t0);border:1px solid var(--b2);padding:10px 16px;border-radius:var(--r8);font-size:12.5px;z-index:400;max-width:calc(100% - 32px);}
+.empty{padding:36px 0;color:var(--t2);}
+.pg-note{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--t2);font-size:12px;}
+</style>
+
+<div class="topbar"><div class="topbar-in">
+  <div class="nb-logo-row">
+    <div class="nb-logo"><div class="nb-logo-text"><div class="nb-logo-name">SITA <span>Operation</span></div></div></div>
+    <div class="nb-right"><div class="nb-live"><span class="nb-live-dot"></span>TAGGING</div><div class="nb-clock" id="clk">--:--:--</div></div>
+  </div>
+</div></div>
+
+<main class="wrap">
+  <div class="head">
+    <div>
+      <div class="kick"><i></i>ELQ AIRPORT IT · SITA TAG PLACEMENT</div>
+      <h1>Devices without<br><span>SITA tag</span></h1>
+      <p>Every workstation has its own colour. Stick the new SITA tag on the device, type its number in the box and press TO DO. It saves, turns green and says DONE. When everyone has finished, download the Excel.</p>
+    </div>
+    <div class="tools" style="margin:0">
+      <button type="button" class="btn btn-g" id="xl-cur">⬇ Excel · this terminal</button>
+      <button type="button" class="btn btn-b" id="csv-cur">⬇ CSV · this terminal</button>
+      <button type="button" class="btn" id="xl-all">⬇ Excel · both terminals</button>
+    </div>
+  </div>
+
+  <div class="mstrip ms4" id="ms"></div>
+
+  <div class="tabs2" id="tabs"></div>
+  <div class="tabs2 cats" id="cats" aria-label="Categories"></div>
+
+  <div class="tools">
+    <input type="text" id="q" placeholder="Search workstation, type, location…" autocomplete="off"/>
+    <label class="tgl" for="pend"><input type="checkbox" id="pend"/> Pending only</label>
+  </div>
+  <div class="hint" id="syncnote"></div>
+
+  <div id="out"></div>
+</main>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+<script>
+const DATA = {"ELQ-1": [{"g": "DG-DDC", "desc": "Departure Gate Display (FIDS)", "nodes": [{"node": "ELQ1-DG-DDC010", "loc": "Final Departure DOM & Intl", "ip": "", "devs": [{"type": "No asset record", "model": ""}]}, {"node": "ELQ1-DG-DDC011", "loc": "Final Departure DOM & Intl", "ip": "", "devs": [{"type": "No asset record", "model": ""}]}]}, {"g": "LG-DDC", "desc": "First Class Lounge Display (FIDS)", "nodes": [{"node": "ELQ1-LG-DDC002", "loc": "First Class Lounge Intl", "ip": "10.123.220.60", "devs": [{"type": "FIDS Screen", "model": "LG Digital Signage"}]}]}, {"g": "VP-DDC", "desc": "Executive Lounge Display (FIDS)", "nodes": [{"node": "ELQ1-VP-DDC001", "loc": "Executive Lounge", "ip": "10.123.220.57", "devs": [{"type": "FIDS Screen", "model": "LG Digital Signage"}]}, {"node": "ELQ1-VP-DDC002", "loc": "Executive Lounge", "ip": "172.27.56.176", "devs": [{"type": "FIDS Screen", "model": "LG Digital Signage"}]}, {"node": "ELQ1-VP-DDC003", "loc": "Executive Lounge", "ip": "10.123.220.59", "devs": [{"type": "FIDS Screen", "model": "LG Digital Signage"}]}]}], "ELQ-2": [{"g": "BRS", "desc": "Baggage Reconciliation System", "nodes": [{"node": "ELQ2BRS001", "loc": "BRS Area", "ip": "57.1.174.218", "devs": [{"type": "Battery Charger", "model": "Datalogic Vitalino 13"}, {"type": "HHT Battery", "model": "Datalogic Vitalino 13"}, {"type": "HHT Battery", "model": "Datalogic Vitalino 13"}, {"type": "HHT Battery", "model": "Datalogic Vitalino 13"}, {"type": "HHT Scanner", "model": "Datalogic Vitalino 13"}, {"type": "Quad Cradle Charger", "model": "Datalogic Vitalino 13"}]}]}, {"g": "CKB", "desc": "Check-In Counter Workstations", "nodes": [{"node": "ELQ2CKB001", "loc": "Departure Hall", "ip": "57.1.174.210", "devs": [{"type": "Computer", "model": "HP Elite Mini 600 G9"}, {"type": "Boarding Pass Printer (ATB)", "model": "CUSTOM TK180"}, {"type": "Boarding Tag Printer (BTP)", "model": "CUSTOM TK180"}, {"type": "Monitor", "model": "HP Series 3 Pro 322pf"}, {"type": "Passport Reader (OCR)", "model": "DESKO R1201/00411"}]}, {"node": "ELQ2CKB002", "loc": "Departure Hall", "ip": "57.1.174.214", "devs": [{"type": "Computer", "model": "HP Elite Mini 600 G9"}, {"type": "Boarding Pass Printer (ATB)", "model": "CUSTOM TK180"}, {"type": "Boarding Tag Printer (BTP)", "model": "CUSTOM TK180"}, {"type": "Monitor", "model": "HP Series 3 Pro 322pf"}, {"type": "Passport Reader (OCR)", "model": "DESKO R1201/00411"}]}, {"node": "ELQ2CKB003", "loc": "Departure Hall", "ip": "57.1.174.203", "devs": [{"type": "Computer", "model": "HP Elite Mini 600 G9"}, {"type": "Boarding Pass Printer (ATB)", "model": "CUSTOM TK180"}, {"type": "Boarding Tag Printer (BTP)", "model": "CUSTOM TK180"}, {"type": "Monitor", "model": "HP Series 3 Pro 322pf"}, {"type": "Passport Reader (OCR)", "model": "DESKO R1201/00411"}]}, {"node": "ELQ2CKB004", "loc": "Departure Hall", "ip": "57.1.174.207", "devs": [{"type": "Computer", "model": "HP Elite Mini 600 G9"}, {"type": "Boarding Pass Printer (ATB)", "model": "CUSTOM TK180"}, {"type": "Boarding Tag Printer (BTP)", "model": "CUSTOM TK180"}, {"type": "Monitor", "model": "HP Series 3 Pro 322pf"}, {"type": "Passport Reader (OCR)", "model": "DESKO R1201/00411"}]}, {"node": "ELQ2CKB005", "loc": "Departure Hall", "ip": "57.1.174.196", "devs": [{"type": "Computer", "model": "HP Elite Mini 600 G9"}, {"type": "Boarding Pass Printer (ATB)", "model": "CUSTOM TK180"}, {"type": "Boarding Tag Printer (BTP)", "model": "CUSTOM TK180"}, {"type": "Monitor", "model": "HP Series 3 Pro 322pf"}, {"type": "Passport Reader (OCR)", "model": "DESKO R1201/00411"}]}, {"node": "ELQ2CKB006", "loc": "Departure Hall", "ip": "57.1.174.200", "devs": [{"type": "Computer", "model": "HP Elite Mini 600 G9"}, {"type": "Boarding Pass Printer (ATB)", "model": "CUSTOM TK180"}, {"type": "Boarding Tag Printer (BTP)", "model": "CUSTOM TK180"}, {"type": "Monitor", "model": "HP Series 3 Pro 322pf"}, {"type": "Passport Reader (OCR)", "model": "DESKO R1201/00411"}]}, {"node": "ELQ2CKB007", "loc": "Departure Hall", "ip": "57.1.174.201", "devs": [{"type": "Computer", "model": "HP Elite Mini 600 G9"}, {"type": "Boarding Pass Printer (ATB)", "model": "CUSTOM TK180"}, {"type": "Boarding Tag Printer (BTP)", "model": "CUSTOM TK180"}, {"type": "Monitor", "model": "HP Series 3 Pro 322pf"}, {"type": "Passport Reader (OCR)", "model": "DESKO R1201/00411"}]}, {"node": "ELQ2CKB008", "loc": "Departure Hall", "ip": "57.1.174.208", "devs": [{"type": "Computer", "model": "HP Elite Mini 600 G9"}, {"type": "Boarding Pass Printer (ATB)", "model": "CUSTOM TK180"}, {"type": "Boarding Tag Printer (BTP)", "model": "CUSTOM TK180"}, {"type": "Monitor", "model": "HP Series 3 Pro 322pf"}, {"type": "Passport Reader (OCR)", "model": "DESKO R1201/00411"}]}, {"node": "ELQ2CKB009", "loc": "Departure Hall", "ip": "57.1.174.212", "devs": [{"type": "Computer", "model": "HP Elite Mini 600 G9"}, {"type": "Boarding Pass Printer (ATB)", "model": "CUSTOM TK180"}, {"type": "Boarding Tag Printer (BTP)", "model": "CUSTOM TK180"}, {"type": "Monitor", "model": "HP Series 3 Pro 322pf"}, {"type": "Passport Reader (OCR)", "model": "DESKO R1201/00411"}]}]}, {"g": "GTU", "desc": "Gate Unit Workstations", "nodes": [{"node": "ELQ2GTU001", "loc": "Departure Gates", "ip": "57.1.174.202", "devs": [{"type": "Computer", "model": "HP Elite Mini 600 G9"}, {"type": "Boarding Gate Reader (BGR)", "model": "DESKO BGR504 PRO"}, {"type": "Boarding Pass Printer (ATB)", "model": "CUSTOM TK180"}, {"type": "Document Printer (DCP)", "model": "EPSON FX-890II"}, {"type": "Monitor", "model": "HP Series 3 Pro 322pf"}]}, {"node": "ELQ2GTU002", "loc": "Departure Gates", "ip": "57.1.174.206", "devs": [{"type": "Computer", "model": "HP Elite Mini 600 G9"}, {"type": "Boarding Gate Reader (BGR)", "model": "ACCESS BGR 135"}, {"type": "Boarding Pass Printer (ATB)", "model": "CUSTOM TK180"}, {"type": "Document Printer (DCP)", "model": "EPSON FX-890II"}, {"type": "Monitor", "model": "HP Series 3 Pro 322pf"}]}, {"node": "ELQ2GTU003", "loc": "Departure Gates", "ip": "57.1.174.205", "devs": [{"type": "Computer", "model": "HP Elite Mini 600 G9"}, {"type": "Boarding Gate Reader (BGR)", "model": "ACCESS BGR 135"}, {"type": "Boarding Pass Printer (ATB)", "model": "CUSTOM TK180"}, {"type": "Document Printer (DCP)", "model": "EPSON FX-890II"}, {"type": "Monitor", "model": "HP Series 3 Pro 322pf"}]}, {"node": "ELQ2GTU004", "loc": "Departure Gates", "ip": "57.1.174.199", "devs": [{"type": "Computer", "model": "HP Elite Mini 600 G9"}, {"type": "Boarding Gate Reader (BGR)", "model": "ACCESS BGR 135"}, {"type": "Boarding Pass Printer (ATB)", "model": "CUSTOM TK180"}, {"type": "Document Printer (DCP)", "model": "EPSON FX-890II"}, {"type": "Monitor", "model": "HP Series 3 Pro 322pf"}]}, {"node": "ELQ2GTU005", "loc": "Departure Gates", "ip": "57.1.174.220", "devs": [{"type": "Computer", "model": "HP Elite Mini 600 G9"}, {"type": "Boarding Gate Reader (BGR)", "model": "ACCESS BGR 135"}, {"type": "Boarding Pass Printer (ATB)", "model": "CUSTOM TK180"}, {"type": "Monitor", "model": "HP Series 3 Pro 322pf"}]}, {"node": "ELQ2GTU006", "loc": "Departure Gates", "ip": "57.1.174.209", "devs": [{"type": "Computer", "model": "HP Elite Mini 600 G9"}, {"type": "Boarding Gate Reader (BGR)", "model": "DESKO BGR504 PRO"}, {"type": "Boarding Pass Printer (ATB)", "model": "CUSTOM TK180"}, {"type": "Document Printer (DCP)", "model": "EPSON FX-890II"}, {"type": "LaserJet Printer", "model": "LaserJet Enterprise M507"}, {"type": "Monitor", "model": "HP Series 3 Pro 322pf"}]}]}, {"g": "PFM", "desc": "Public Monitor & E-Gates", "nodes": [{"node": "EGATE001", "loc": "Public Area", "ip": "57.1.174.252", "devs": [{"type": "E-Gate", "model": "ARGUS AIR"}]}, {"node": "EGATE002", "loc": "Public Area", "ip": "57.1.174.253", "devs": [{"type": "E-Gate", "model": "ARGUS AIR"}]}, {"node": "ELQ2PFM001", "loc": "Public Area", "ip": "57.1.174.251", "devs": [{"type": "Computer", "model": "HP Elite Mini 600 G9"}, {"type": "Monitor", "model": "HP Series 3 Pro 322pf"}]}]}]};
+const TERMS = Object.keys(DATA);
+let cur = TERMS[1] || TERMS[0];
+let cat = 'all';   // selected category (group) inside the terminal
+let tags = {};            // key -> {t: 'XS…', at: ISO time}
+const drafts = {};        // key -> text typed but not saved yet
+const TAG_RE = /^XS\d{8}$/;
+const REG = {"XS30361696": "ELQ1CKB001 Computer", "XS30362767": "ELQ1CKB001 Monitor", "XS30362799": "ELQ1CKB001 Boarding Pass Printer (ATB)", "XS30362804": "ELQ1CKB001 Boarding Tag Printer (BTP)", "XS30363476": "ELQ1CKB001 Laser Gun Reader (LSR)", "XS30362815": "ELQ1CKB001 Passport Reader (OCR)", "XS30362233": "ELQ1CKB001 UPS", "XS30361695": "ELQ1CKB002 Computer", "XS30362768": "ELQ1CKB002 Monitor", "XS30362800": "ELQ1CKB002 Boarding Pass Printer (ATB)", "XS30362798": "ELQ1CKB002 Boarding Tag Printer (BTP)", "XS30362807": "ELQ1CKB002 Laser Gun Reader (LSR)", "XS30362816": "ELQ1CKB002 Passport Reader (OCR)", "XS30362232": "ELQ1CKB002 UPS", "XS30361694": "ELQ1CKB003 Computer", "XS30362776": "ELQ1CKB003 Monitor", "XS30362801": "ELQ1CKB003 Boarding Pass Printer (ATB)", "XS30362797": "ELQ1CKB003 Boarding Tag Printer (BTP)", "XS30362808": "ELQ1CKB003 Laser Gun Reader (LSR)", "XS30362817": "ELQ1CKB003 Passport Reader (OCR)", "XS30362228": "ELQ1CKB003 UPS", "XS30361693": "ELQ1CKB004 Computer", "XS30362770": "ELQ1CKB004 Monitor", "XS30362802": "ELQ1CKB004 Boarding Pass Printer (ATB)", "XS30362805": "ELQ1CKB004 Boarding Tag Printer (BTP)", "XS30362809": "ELQ1CKB004 Laser Gun Reader (LSR)", "XS30362818": "ELQ1CKB004 Passport Reader (OCR)", "XS30362227": "ELQ1CKB004 UPS", "XS30361692": "ELQ1CKB005 Computer", "XS30362771": "ELQ1CKB005 Monitor", "XS30363247": "ELQ1CKB005 Boarding Pass Printer (ATB)", "XS30363248": "ELQ1CKB005 Boarding Tag Printer (BTP)", "XS30362810": "ELQ1CKB005 Laser Gun Reader (LSR)", "XS30362819": "ELQ1CKB005 Passport Reader (OCR)", "XS30362229": "ELQ1CKB005 UPS", "XS30361691": "ELQ1CKB006 Computer", "XS30362773": "ELQ1CKB006 Monitor", "XS30363249": "ELQ1CKB006 Boarding Pass Printer (ATB)", "XS30362780": "ELQ1CKB006 Boarding Tag Printer (BTP)", "XS30362811": "ELQ1CKB006 Laser Gun Reader (LSR)", "XS30362812": "ELQ1CKB007 Laser Gun Reader (LSR)", "XS30362230": "ELQ1CKB006 UPS", "XS30361690": "ELQ1CKB007 Computer", "XS30362777": "ELQ1CKB007 Monitor", "XS30363250": "ELQ1CKB007 Boarding Pass Printer (ATB)", "XS30363251": "ELQ1CKB007 Boarding Tag Printer (BTP)", "XS30362821": "ELQ1CKB007 Passport Reader (OCR)", "XS30362231": "ELQ1CKB007 UPS", "XS30361689": "ELQ1CKB008 Computer", "XS30362774": "ELQ1CKB008 Monitor", "XS3036325": "ELQ1CKB008 Boarding Pass Printer (ATB)", "XS3063253": "ELQ1CKB008 Boarding Tag Printer (BTP)", "XS30362813": "ELQ1CKB008 Laser Gun Reader (LSR)", "XS3036822": "ELQ1CKB008 Passport Reader (OCR)", "XS30362226": "ELQ1CKB008 UPS", "XS30361688": "ELQ1CKB009 Computer", "XS30361913": "ELQ1CKB009 Monitor", "XS30363254": "ELQ1CKB009 Boarding Pass Printer (ATB)", "XS30362806": "ELQ1CKB009 Boarding Tag Printer (BTP)", "XS30362814": "ELQ1CKB009 Laser Gun Reader (LSR)", "XS30362823": "ELQ1CKB009 Passport Reader (OCR)", "XS30362225": "ELQ1CKB009 UPS", "XS30361886": "ELQ1GTU001 Computer", "XS30361912": "ELQ1GTU001 Monitor", "XS30362803": "ELQ1GTU001 Boarding Pass Printer (ATB)", "XS30363255": "ELQ1GTU001 Boarding Tag Printer (BTP)", "XS30362828": "ELQ1GTU001 Boarding Gate Reader (BGR)", "XS30362782": "ELQ1GTU001 Document Printer (DCP)", "XS30362824": "ELQ1GTU001 Passport Reader (OCR)", "XS30362224": "ELQ1GTU001 UPS", "XS30361885": "ELQ1BRS001 Computer", "XS30361911": "ELQ1GTU002 Monitor", "XS30363256": "ELQ1GTU002 Boarding Pass Printer (ATB)", "XS30363259": "ELQ1GTU002 Boarding Tag Printer (BTP)", "XS30362783": "ELQ1GTU002 Document Printer (DCP)", "XS30362829": "ELQ1GTU002 Boarding Gate Reader (BGR)", "XS30362525": "ELQ1GTU002 Passport Reader (OCR)", "XS30362223": "ELQ1GTU002 UPS", "XS30361884": "ELQ1GTU003 Computer", "XS30362775": "ELQ1GTU003 Monitor", "XS30363258": "ELQ1GTU003 Boarding Pass Printer (ATB)", "XS30363257": "ELQ1GTU003 Boarding Tag Printer (BTP)", "XS30362784": "ELQ1GTU003 Document Printer (DCP)", "XS30362781": "ELQ1GTU003 Boarding Gate Reader (BGR)", "XS30362826": "ELQ1GTU003 Passport Reader (OCR)", "XS30362222": "ELQ1GTU003 UPS", "XS30361881": "ELQ1GTU004 Monitor", "XS30362769": "ELQ1GTU004 Computer", "XS30363260": "ELQ1GTU004 Boarding Pass Printer (ATB)", "XS30363261": "ELQ1GTU004 Boarding Tag Printer (BTP)", "XS30362785": "ELQ1GTU004 Document Printer (DCP)", "XS30362830": "ELQ1GTU004 Boarding Gate Reader (BGR)", "XS30362827": "ELQ1GTU004 Passport Reader (OCR)", "XS30362221": "ELQ1GTU004 UPS", "XS30362845": "ELQ1BRS001 HHT Scanner", "XS30362846": "ELQ1BRS001 HHT Scanner", "XS30362848": "ELQ1BRS001 HHT Scanner", "XS30362779": "ELQ1BRS001 Monitor", "XS30362786": "ELQ1BRS001 LaserJet Printer", "XS30362844": "ELQ1BRS001 Battery Charger", "XS30362234": "ELQ1-CK-DDC009 FIDS Screen", "XS30364466": "ELQ1-AMS01 Computer", "XS30362772": "ELQ1-AMS01 Monitor", "XS30364463": "ELQ1-AMS02 Computer", "XS30362778": "ELQ1-AMS02 Monitor", "XS30362235": "ELQ1-CK-DDC001 FIDS Screen", "XS30362236": "ELQ1-CK-DDC002 FIDS Screen", "XS30362237": "ELQ1-CK-DDC003 FIDS Screen", "XS30362238": "ELQ1-CK-DDC004 FIDS Screen", "XS30362239": "ELQ1-CK-DDC005 FIDS Screen", "XS30362240": "ELQ1-CK-DDC006 FIDS Screen", "XS30362241": "ELQ1-CK-DDC007 FIDS Screen", "XS30362242": "ELQ1-CK-DDC008 FIDS Screen", "XS30362220": "ELQ1-GT-DDC001 FIDS Screen", "XS30362243": "ELQ1-GT-DDC002 FIDS Screen", "XS30362244": "ELQ1-GT-DDC003 FIDS Screen", "XS30362245": "ELQ1-GT-DDC004 FIDS Screen", "XS30362247": "ELQ1-AC-DDC001 FIDS Screen", "XS30362249": "ELQ1-AC-DDC002 FIDS Screen", "XS30362251": "ELQ1-AC-DDC003 FIDS Screen", "XS30362252": "ELQ1-AC-DDC004 FIDS Screen", "XS30362248": "ELQ1-AT-DDC001 FIDS Screen", "XS30362254": "ELQ1-AT-DDC002 FIDS Screen", "XS30362253": "ELQ1-AT-DDC003 FIDS Screen", "XS30362255": "ELQ1-AT-DDC004 FIDS Screen", "XS30362262": "ELQ1-AT-DDC005 FIDS Screen", "XS30362261": "ELQ1-AT-DDC006 FIDS Screen", "XS30362263": "ELQ1-AT-DDC007 FIDS Screen", "XS30362256": "ELQ1-DC-DDC001 FIDS Screen", "XS30362258": "ELQ1-DC-DDC002 FIDS Screen", "XS30362257": "ELQ1-DC-DDC003 FIDS Screen", "XS30362259": "ELQ1-DG-DDC001 FIDS Screen", "XS30362260": "ELQ1-DG-DDC002 FIDS Screen", "XS30362272": "ELQ1-DG-DDC003 FIDS Screen", "XS30362273": "ELQ1-DG-DDC004 FIDS Screen", "XS30362264": "ELQ1-DG-DDC005 FIDS Screen", "XS30362265": "ELQ1-DG-DDC006 FIDS Screen", "XS30362266": "ELQ1-DG-DDC007 FIDS Screen", "XS30362268": "ELQ1-DG-DDC008 FIDS Screen", "XS30362267": "ELQ1-DG-DDC009 FIDS Screen", "XS30362271": "ELQ1-LG-DDC001 FIDS Screen", "XS30362246": "ELQ1-BI-DDC001 FIDS Screen", "XS30362250": "ELQ1-BD-DDC001 FIDS Screen", "XS00939228": "ELQ2-CK-DDC001 FIDS Screen", "XS00939227": "ELQ2-CK-DDC002 FIDS Screen", "XS00939226": "ELQ2-CK-DDC003 FIDS Screen", "XS00939225": "ELQ2-CK-DDC004 FIDS Screen", "XS00939224": "ELQ2-CK-DDC005 FIDS Screen", "XS00939223": "ELQ2-CK-DDC006 FIDS Screen", "XS00939222": "ELQ2-CK-DDC007 FIDS Screen", "XS00939221": "ELQ2-CK-DDC008 FIDS Screen", "XS00936848": "ELQ2-CK-DDC009 FIDS Screen", "XS00936847": "ELQ2-CK-DDC010 FIDS Screen", "XS00936846": "ELQ2-CK-DDC011 FIDS Screen", "XS30352786": "ELQ2-DC-DDC001 FIDS Screen", "XS30352785": "ELQ2-DC-DDC002 FIDS Screen", "XS30352784": "ELQ2-DC-DDC003 FIDS Screen", "XS30352783": "ELQ2-DC-DDC004 FIDS Screen", "XS30352782": "ELQ2-DC-DDC005 FIDS Screen", "XS30352781": "ELQ2-DC-DDC006 FIDS Screen", "XS30352780": "ELQ2-DC-DDC007 FIDS Screen", "XS30352779": "ELQ2-DC-DDC008 FIDS Screen", "XS30352778": "ELQ2-DC-DDC009 FIDS Screen", "XS30352777": "ELQ2-DC-DDC010 FIDS Screen", "XS30352776": "ELQ2-DC-DDC011 FIDS Screen", "XS30352775": "ELQ2-DC-DDC012 FIDS Screen", "XS30352774": "ELQ2-DC-DDC013 FIDS Screen", "XS30352773": "ELQ2-DG-DDC001 FIDS Screen", "XS30352772": "ELQ2-DG-DDC002 FIDS Screen", "XS30352771": "ELQ2-DG-DDC003 FIDS Screen", "XS30352770": "ELQ2-DG-DDC004 FIDS Screen", "XS00939249": "ELQ2-DG-DDC005 FIDS Screen", "XS00939248": "ELQ2-DG-DDC006 FIDS Screen", "XS00939247": "ELQ2-DG-DDC007 FIDS Screen", "XS00939246": "ELQ2-DG-DDC008 FIDS Screen", "XS00939245": "ELQ2-DG-DDC009 FIDS Screen", "XS00939244": "ELQ2-DG-DDC010 FIDS Screen", "XS00939243": "ELQ2-DG-DDC011 FIDS Screen", "XS00939242": "ELQ2-DG-DDC012 FIDS Screen", "XS00939241": "ELQ2-DG-DDC013 FIDS Screen", "XS00939240": "ELQ2-DG-DDC014 FIDS Screen", "XS00939239": "ELQ2-DG-DDC015 FIDS Screen", "XS00939238": "ELQ2-DG-DDC016 FIDS Screen", "XS00939237": "ELQ2-DG-DDC017 FIDS Screen", "XS00939236": "ELQ2-AC-DDC001 FIDS Screen", "XS00939235": "ELQ2-AC-DDC002 FIDS Screen", "XS00939234": "ELQ2-AC-DDC003 FIDS Screen", "XS00939233": "ELQ2-AC-DDC004 FIDS Screen", "XS00939232": "ELQ2-AC-DDC005 FIDS Screen", "XS00939231": "ELQ2-AC-DDC006 FIDS Screen", "XS00939230": "ELQ2-AC-DDC007 FIDS Screen", "XS00939229": "ELQ2-AC-DDC008 FIDS Screen"};   // tags already in the register -> device
+let dbCol = null, usingDb = false;
+
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const keyOf = (t, n, d, i) => (t + '_' + n + '_' + d.type + '_' + ('x' + i)).replace(/[^A-Za-z0-9_-]/g, '_');
+
+// one hue per workstation, spread by golden angle so neighbours never look alike
+function hueOf(i){ return Math.round((i * 137.5 + 205) % 360); }
+function hslCss(i){ return `hsl(${hueOf(i)} 78% 66%)`; }
+function hslHex(i, l){ // l in 0..1 lightness for excel fills
+  const h = hueOf(i) / 360, s = .7, a = s * Math.min(l, 1 - l);
+  const f = n => { const k = (n + h * 12) % 12; const c = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1); return Math.round(c * 255).toString(16).padStart(2, '0'); };
+  return (f(0) + f(8) + f(4)).toUpperCase();
+}
+
+// flat list with colour index per workstation (per terminal)
+{ const ORD=['CKB','GTU','PFM','BRS']; if (DATA['ELQ-2']) DATA['ELQ-2'].sort((x,y)=>ORD.indexOf(x.g)-ORD.indexOf(y.g)); }
+const FLAT = [];
+TERMS.forEach(t => { let wi = 0; DATA[t].forEach(g => g.nodes.forEach(n => { n.ci = wi++; n.devs.forEach((d, i) => { d.key = keyOf(t, n.node, d, i); FLAT.push({t, g, n, d}); }); })); });
+{ let pn = 30483720; ['ELQ-2', 'ELQ-1'].forEach(t => FLAT.filter(x => x.t === t).forEach(x => { x.d.plan = 'XS' + (pn++); })); }
+
+function tagState(key){ return tags[key] ? 'ok' : 'pending'; }
+const label = st => st === 'ok' ? 'DONE' : 'TO DO';
+const tagText = k => tags[k] ? tags[k].t : '';
+function norm(v){
+  if (v && typeof v === 'object' && TAG_RE.test(v.t || '')) return {t: v.t, at: v.at || ''};
+  if (typeof v === 'string' && TAG_RE.test(v)) return {t: v, at: ''};
+  return null;
+}
+const dirty = new Set();
+function persist(key){
+  dirty.add(key);
+  try { localStorage.setItem('elq_tags_v2', JSON.stringify(tags)); } catch (e) {}
+  if (!(usingDb && dbCol)) { dirty.delete(key); return; }
+  const ref = dbCol.doc(key), v = tags[key];
+  (v ? ref.set({tag: v.t, at: v.at}) : ref.delete())
+    .then(() => dirty.delete(key), () => { dirty.delete(key); usingDb = false; setNote(); });
+}
+function setNote(){
+  document.getElementById('syncnote').textContent = (usingDb
+    ? 'Saved tags are shared: everyone who opens this page sees the same DONE devices. '
+    : 'Saved tags are kept in this browser only. ')
+    + 'A SITA tag is XS followed by 8 digits, nothing more can be typed. A number that is already used is refused.';
+}
+
+function counts(t){
+  const all = FLAT.filter(x => x.t === t);
+  const ok = all.filter(x => tagState(x.d.key) === 'ok').length;
+  return {total: all.length, ok, left: all.length - ok, ws: new Set(all.map(x => x.n.node)).size};
+}
+function renderMetrics(){
+  const c = counts(cur), all = {total: FLAT.length, ok: FLAT.filter(x => tagState(x.d.key) === 'ok').length};
+  document.getElementById('ms').innerHTML =
+    `<div class="mcard" style="--mc-c:var(--blu)"><div class="mv">${c.total}</div><div class="ml">Devices to tag</div><div class="ms">${cur}</div></div>` +
+    `<div class="mcard" style="--mc-c:var(--pur)"><div class="mv">${c.ws}</div><div class="ml">Workstations</div><div class="ms">${cur}</div></div>` +
+    `<div class="mcard" style="--mc-c:var(--grn)"><div class="mv">${c.ok}</div><div class="ml">Tagged</div><div class="ms">${cur}</div></div>` +
+    `<div class="mcard" style="--mc-c:var(--amb)"><div class="mv">${c.left}</div><div class="ml">Still to tag</div><div class="ms">${all.total - all.ok} in both terminals</div></div>`;
+  const gst = g => { const ds = g.nodes.flatMap(n => n.devs); return {t: ds.length, ok: ds.filter(d => tagState(d.key) === 'ok').length}; };
+  const allG = gst({nodes: DATA[cur].flatMap(g => g.nodes)});
+  document.getElementById('cats').innerHTML =
+    `<button type="button" class="tab2${cat === 'all' ? ' on' : ''}" data-c="all">All categories<b>${allG.ok}/${allG.t}</b></button>` +
+    DATA[cur].map(g => { const k = gst(g); return `<button type="button" class="tab2${cat === g.g ? ' on' : ''}" data-c="${esc(g.g)}" title="${esc(g.desc)}">${esc(g.g)}<b>${k.ok}/${k.t}</b></button>`; }).join('');
+  document.getElementById('tabs').innerHTML = TERMS.map(t => { const k = counts(t); return `<button type="button" class="tab2${t === cur ? ' on' : ''}" data-t="${t}"><span class="tn">${t}</span><span class="tc">${k.ok}/${k.total} <em>tagged</em></span><span class="bar"><i style="width:${k.total ? Math.round(100*k.ok/k.total) : 0}%"></i></span></button>`; }).join('');
+}
+
+function render(){
+  renderMetrics();
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  const pend = document.getElementById('pend').checked;
+  let html = '', shown = 0;
+  DATA[cur].forEach(g => {
+    if (cat !== 'all' && g.g !== cat) return;
+    const cards = g.nodes.map(n => {
+      const devs = n.devs.filter(d => {
+        if (pend && tagState(d.key) === 'ok') return false;
+        if (!q) return true;
+        return [n.node, n.loc, d.type, d.model].some(v => (v || '').toLowerCase().includes(q));
+      });
+      if (!devs.length) return '';
+      const done = n.devs.filter(d => tagState(d.key) === 'ok').length;
+      const col = hslCss(n.ci);
+      shown += devs.length;
+      return `<article class="ws" style="--c:${col}">
+        <div class="ws-top"><div class="sw">${n.ci + 1}</div><div style="min-width:0"><div class="ws-name">${esc(n.node)}</div>
+        <div class="ws-meta">${esc(n.loc)}</div></div><div class="ws-prog">${done}/${n.devs.length}</div></div>
+        ${devs.map(d => {
+          const st = tagState(d.key), val = st === 'ok' ? tagText(d.key) : (drafts[d.key] || '');
+          return `<div class="dv"><div style="min-width:0"><div class="dv-t">${esc(d.type)}</div>${d.plan ? `<div class="dv-p">Planned ${esc(d.plan)}</div>` : ''}${d.model ? `<div class="dv-m">${esc(d.model)}</div>` : ''}</div>
+            <div class="dv-i"><input class="tin ${st === 'ok' ? 'ok' : ''}" type="text" inputmode="text" enterkeyhint="done" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="10" placeholder="XS + 8 digits" value="${esc(val)}" data-k="${esc(d.key)}" ${st === 'ok' ? 'readonly' : ''} aria-label="SITA tag for ${esc(n.node)} ${esc(d.type)}"/>
+            <button type="button" class="st ${st === 'ok' ? 'ok' : ''}" data-act="chip" aria-pressed="${st === 'ok'}" aria-label="${st === 'ok' ? 'Tag saved. Press to edit' : 'Save SITA tag'}: ${esc(n.node)} ${esc(d.type)}">${label(st)}</button></div><div class="dv-e" hidden></div></div>`;
+        }).join('')}</article>`;
+    }).filter(Boolean).join('');
+    if (cards) html += `<section class="sec"><div class="sec-h"><h2>${esc(g.g)}</h2><span>${esc(g.desc)}</span><em>${g.nodes.length} workstation${g.nodes.length > 1 ? 's' : ''} · ${g.nodes.flatMap(n => n.devs).filter(d => tagState(d.key) === 'ok').length}/${g.nodes.flatMap(n => n.devs).length} tagged</em></div><div class="grid">${cards}</div></section>`;
+  });
+  document.getElementById('out').innerHTML = html || '<div class="empty">Nothing matches. Clear the search or untick "Pending only".</div>';
+}
+
+// ---- events (delegated) ----
+document.getElementById('tabs').addEventListener('click', e => { const b = e.target.closest('[data-t]'); if (b){ cur = b.dataset.t; cat = 'all'; render(); } });
+document.getElementById('cats').addEventListener('click', e => { const b = e.target.closest('[data-c]'); if (b){ cat = b.dataset.c; render(); } });
+document.getElementById('q').addEventListener('input', render);
+document.getElementById('pend').addEventListener('change', render);
+function rowOf(i){ const k = i.dataset.k; return FLAT.find(x => x.d.key === k); }
+// XS then exactly 8 digits: nothing else can be typed, extra characters are dropped
+function clean(raw){
+  let v = String(raw || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (/^\d/.test(v)) v = 'XS' + v;           // digits first: add the XS for the user
+  let o = '';
+  for (const c of v) {
+    if (o.length === 0) { if (c === 'X') o += c; }
+    else if (o.length === 1) { if (c === 'S') o += c; }
+    else if (c >= '0' && c <= '9') o += c;
+    if (o.length === 10) break;
+  }
+  return o;
+}
+function showErr(i, msg){
+  const e = i.closest('.dv').querySelector('.dv-e');
+  i.classList.toggle('bad', !!msg); e.hidden = !msg; e.textContent = msg || '';
+}
+function refreshRow(i){
+  const k = i.dataset.k, st = tagState(k), b = i.parentElement.querySelector('.st');
+  i.className = 'tin ' + (st === 'ok' ? 'ok' : ''); i.readOnly = st === 'ok'; i.value = st === 'ok' ? tagText(k) : (drafts[k] || '');
+  showErr(i, '');
+  b.className = 'st ' + (st === 'ok' ? 'ok' : ''); b.textContent = label(st); b.setAttribute('aria-pressed', st === 'ok');
+  const card = i.closest('.ws'), name = card.querySelector('.ws-name').textContent;
+  const n = DATA[cur].flatMap(g => g.nodes).find(x => x.node === name);
+  if (n) card.querySelector('.ws-prog').textContent = n.devs.filter(d => tagState(d.key) === 'ok').length + '/' + n.devs.length;
+  renderMetrics();
+}
+function press(b){
+  const i = b.parentElement.querySelector('.tin'), k = i.dataset.k, x = rowOf(i);
+  if (tags[k]) {                       // already saved: press again to edit
+    drafts[k] = tags[k].t; delete tags[k]; persist(k); refreshRow(i); toast('Back to TO DO. Change the number and press TO DO'); return;
+  }
+  const v = clean(i.value); i.value = v; drafts[k] = v;
+  const bad = m => showErr(i, m);
+  if (!v) return bad('Type the SITA tag: XS and 8 digits');
+  if (v.length < 10) return bad('Too short: ' + Math.max(0, v.length - 2) + ' of 8 digits. Add ' + (10 - v.length) + ' more');
+  const other = Object.keys(tags).find(o => tags[o].t === v && o !== k);
+  if (other) { const y = FLAT.find(z => z.d.key === other); return bad(v + ' is already saved for ' + (y ? y.n.node + ' ' + y.d.type : 'another device')); }
+  if (REG[v]) return bad(v + ' already belongs to ' + REG[v]);
+  tags[k] = {t: v, at: new Date().toISOString()}; delete drafts[k]; persist(k); refreshRow(i);
+  if (document.activeElement && document.activeElement.blur) document.activeElement.blur();   // close the keyboard
+  toast('Saved ' + v + ' for ' + x.n.node + ' · ' + x.d.type);
+}
+const outEl = document.getElementById('out');
+outEl.addEventListener('input', e => {
+  const i = e.target.closest('.tin'); if (!i) return;
+  const v = clean(i.value); if (v !== i.value) i.value = v;
+  drafts[i.dataset.k] = v; showErr(i, '');
+});
+outEl.addEventListener('keydown', e => { const i = e.target.closest('.tin'); if (i && e.key === 'Enter'){ e.preventDefault(); press(i.parentElement.querySelector('.st')); i.blur(); } });
+outEl.addEventListener('click', e => { const b = e.target.closest('[data-act="chip"]'); if (b) press(b); });
+// tapping anywhere else closes the phone keyboard
+document.addEventListener('pointerdown', e => {
+  const a = document.activeElement;
+  if (a && a.classList && a.classList.contains('tin') && !e.target.closest('.tin') && !e.target.closest('.st')) a.blur();
+});
+
+let tt; function toast(m){ const el = document.getElementById('toast'); el.textContent = m; el.hidden = false; clearTimeout(tt); tt = setTimeout(() => el.hidden = true, 2600); }
+
+// ---- downloads ----
+const placedAt = k => { const v = tags[k]; if (!v || !v.at || isNaN(Date.parse(v.at))) return ''; return new Date(v.at).toLocaleString('en-GB'); };
+function rowsFor(terms){
+  return FLAT.filter(x => terms.includes(x.t)).map(x => [x.t, x.g.g, x.n.node, x.n.loc, x.d.type, x.d.model || '', x.d.plan || '', tagText(x.d.key), tagState(x.d.key) === 'ok' ? 'Yes' : 'No', placedAt(x.d.key)]);
+}
+const HEAD = ['Terminal', 'Page', 'Workstation', 'Location', 'Device Type', 'Model', 'Planned Tag', 'New SITA Tag', 'Tag placed', 'Placed at'];
+async function save(name, data){
+  const dl = (typeof claude !== 'undefined') ? await claude.use('downloads').catch(() => null) : null;
+  try {
+    if (dl) { await dl.save({filename: name, data}); }
+    else {
+      const blob = new Blob([data], {type: name.endsWith('.csv') ? 'text/csv;charset=utf-8' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    }
+    toast('Saved ' + name);
+  } catch (e) { if (e && e.code !== 'declined') toast('Could not save the file'); }
+}
+const stamp = () => new Date().toISOString().slice(0, 10);
+function csv(terms, label){
+  const q = c => '"' + String(c).replace(/"/g, '""') + '"';
+  save(`ELQ_SITA_Tag_${label}_${stamp()}.csv`, '﻿' + [HEAD, ...rowsFor(terms)].map(r => r.map(q).join(',')).join('\r\n'));
+}
+async function xlsx(terms, label){
+  if (!window.ExcelJS){ toast('Excel library did not load. Use CSV or try again.'); return; }
+  const wb = new ExcelJS.Workbook(); wb.creator = 'ELQ Airport IT';
+  const border = {top:{style:'thin',color:{argb:'FF2A4A66'}},bottom:{style:'thin',color:{argb:'FF2A4A66'}},left:{style:'thin',color:{argb:'FF2A4A66'}},right:{style:'thin',color:{argb:'FF2A4A66'}}};
+  terms.forEach(t => {
+    const ws = wb.addWorksheet(t, {views:[{state:'frozen', ySplit:3}]});
+    ws.mergeCells(1, 1, 1, HEAD.length);
+    Object.assign(ws.getCell(1, 1), {value: `${t} · Devices without SITA tag`, font:{bold:true, size:14, color:{argb:'FFFFFFFF'}}, fill:{type:'pattern', pattern:'solid', fgColor:{argb:'FF0B1B2D'}}, alignment:{vertical:'middle', indent:1}});
+    ws.getRow(1).height = 30;
+    ws.mergeCells(2, 1, 2, HEAD.length);
+    Object.assign(ws.getCell(2, 1), {value: `Each workstation has its own colour · exported ${new Date().toLocaleString()}`, font:{italic:true, size:9, color:{argb:'FF6B7C8F'}}, alignment:{indent:1}});
+    const hr = ws.getRow(3); hr.height = 22;
+    HEAD.forEach((h, i) => Object.assign(hr.getCell(i + 1), {value:h, font:{bold:true, color:{argb:'FFFFFFFF'}}, fill:{type:'pattern', pattern:'solid', fgColor:{argb:'FF183A5A'}}, border}));
+    const rows = FLAT.filter(x => x.t === t);
+    rows.forEach(x => {
+      const r = ws.addRow([x.t, x.g.g, x.n.node, x.n.loc, x.d.type, x.d.model || '', x.d.plan || '', tagText(x.d.key), tagState(x.d.key) === 'ok' ? 'Yes' : 'No', placedAt(x.d.key)]);
+      r.eachCell({includeEmpty:true}, (c, i) => { c.border = border; c.alignment = {vertical:'middle'}; if (i <= 3) c.fill = {type:'pattern', pattern:'solid', fgColor:{argb:'FF' + hslHex(x.n.ci, .82)}}; });
+      r.getCell(3).font = {bold:true, name:'Consolas', color:{argb:'FF07111F'}};
+      r.getCell(7).font = {name:'Consolas', size:10, color:{argb:'FF0F766E'}}; r.getCell(8).font = {name:'Consolas', size:11, bold:true};
+      if (r.getCell(9).value === 'Yes') { [8, 9].forEach(c => { r.getCell(c).fill = {type:'pattern', pattern:'solid', fgColor:{argb:'FFC6EFCE'}}; }); r.getCell(9).font = {bold:true, color:{argb:'FF006100'}}; }
+    });
+    [10, 11, 18, 28, 28, 24, 16, 18, 12, 20].forEach((w, i) => ws.getColumn(i + 1).width = w);
+    ws.autoFilter = {from:{row:3, column:1}, to:{row:3, column:HEAD.length}};
+  });
+  const buf = await wb.xlsx.writeBuffer();
+  save(`ELQ_SITA_Tag_${label}_${stamp()}.xlsx`, buf);
+}
+document.getElementById('xl-cur').onclick = () => xlsx([cur], cur);
+document.getElementById('csv-cur').onclick = () => csv([cur], cur);
+document.getElementById('xl-all').onclick = () => xlsx(TERMS, 'Both');
+
+// ---- clock ----
+setInterval(() => { document.getElementById('clk').textContent = new Date().toLocaleTimeString('en-GB'); }, 1000);
+
+// ---- boot: render with whatever is in this browser, then light up shared storage ----
+try { const raw = JSON.parse(localStorage.getItem('elq_tags_v2') || localStorage.getItem('elq_tags_v1') || '{}') || {}; tags = {}; Object.keys(raw).forEach(k => { const v = norm(raw[k]); if (v) tags[k] = v; }); } catch (e) { tags = {}; }
+setNote(); render();
+(async () => {
+  try {
+    if (typeof claude === 'undefined') return; const db = await claude.use('db'); if (!db) return;
+    dbCol = db.collection('tags'); let firstSnap = true;
+    dbCol.onSnapshot(snap => {
+      const m = {}; snap.docs.forEach(d => { const v = norm({t: (d.data() || {}).tag, at: (d.data() || {}).at}); if (v) m[d.id] = v; });
+      const valid = new Set(FLAT.map(x => x.d.key));
+      if (firstSnap) { firstSnap = false; Object.keys(tags).forEach(k => { if (valid.has(k) && !(k in m)) { m[k] = tags[k]; dbCol.doc(k).set({tag: tags[k].t, at: tags[k].at}).catch(() => {}); } }); }
+      dirty.forEach(k => { if (tags[k]) m[k] = tags[k]; else delete m[k]; });
+      usingDb = true; tags = m; setNote();
+      const a = document.activeElement; if (a && a.classList && a.classList.contains('tin')) { renderMetrics(); return; }
+      render();
+    }, () => { usingDb = false; setNote(); });
+  } catch (e) { usingDb = false; }
+})();
+</script>
